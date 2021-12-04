@@ -69,7 +69,7 @@ _Below is an example of how you can instruct your audience on installing and set
 <!-- CONTACT -->
 ## Contact
 
-Your Name -- email@example.com
+Email -- yoobinpark@khu.ac.kr
 
 Project Link: [http://khuhub.khu.ac.kr/2018102946/likeBack](http://khuhub.khu.ac.kr/2018102946/likeBack)
               [http://khuhub.khu.ac.kr/2018102946/likefront](http://khuhub.khu.ac.kr/2018102946/likefront)
