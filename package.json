@@ -8,6 +8,21 @@
     "start": "node src",
     "start:dev": "NODE_PATH=src nodemon --legacy-watch src/ src/index.js"
   },
+  {
+  "name": "heroku",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
   "author": "",
   "license": "ISC",
   "dependencies": {
