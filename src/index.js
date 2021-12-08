@@ -7,7 +7,7 @@ const jwtMiddleware = require('./lib/jwtMiddleware');
 require('dotenv').config();
 const mongoose = require('mongoose');
 const bodyParser = require('koa-bodyparser');
-const port = process.env.PORT || 3000
+const port = process.env.PORT;
 //443
 const passport = require('koa-passport')
 const app = new Koa();
