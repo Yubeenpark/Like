@@ -4,6 +4,7 @@ const  pageCtrl  = require("./page.ctrl");
 const page = new Router();
 const Page = require("../../models/page");
 const index = require('../../../src/index');
+//const render = require('koa-ejs');
 //Page api
 
 /*
@@ -32,7 +33,7 @@ page.get('/recipe/scroll', pageCtrl.scrollPage);    // video list sorted by 추�
 
 
  page.get('/new', async (ctx) => {
-    ctx.render('posts/new');
+    await ctx.render('posts/new');
   });
 
   // create
@@ -46,12 +47,13 @@ page.get('/recipe/scroll', pageCtrl.scrollPage);    // video list sorted by 추�
   // show
   page.get('/:id', async (ctx, next) => {
     const page  = await Page.findOne({_id:ctx.params.id});
-  ctx.render('posts/show', {page});
+    console.log('찾은 페이지',page);
+  ctx.render('posts/show', {page:page,user:ctx.state.user});
   });
 
 
 // update
-page.post('/:id', async (ctx, next) => {
+page.put('/:id', async (ctx, next) => {
     ctx.body.updatedAt = Date.now(); //2
     const page = await Page.findOneAndUpdate({_id:ctx.params.id}, ctx.body);
       ctx.redirect("/posts/"+ctx.params.id);

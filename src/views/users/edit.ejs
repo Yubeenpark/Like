@@ -11,7 +11,7 @@
 
       <h3 class="mb-3">Edit User</h3>
 
-      <form action="/api/auth/users/<%= user.username %>?_method=put" method="post">
+      <form action="/auth/users/<%= user.username %>?_method=put" method="post">
 
         <div class="form-group row">
           <label for="currentPassword" class="col-sm-3 col-form-label">Current Password*</label>
@@ -62,7 +62,7 @@
         </p>
 
         <div class="buttons">
-          <a class="btn btn-primary" href="/api/auth/users/<%= user.username %>">Back</a>
+          <a class="btn btn-primary" href="/auth/users/<%= user.username %>">Back</a>
           <button type="submit" class="btn btn-primary">Submit</button>
         </div>
 

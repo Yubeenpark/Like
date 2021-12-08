@@ -17,7 +17,7 @@
             ],
             "type": "pwa-node"
         },
-        {
+        {"name": "Launch ",
             "program": "${workspaceFolder}/app.js",
             "request": "launch",
             "skipFiles": [

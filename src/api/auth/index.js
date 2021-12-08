@@ -1,3 +1,5 @@
+
+
 require('dotenv').config()
 const Router = require("@koa/router");
 const  authCtrl = require("./auth.ctrl");
@@ -40,7 +42,7 @@ auth.get('/new', async (ctx) => {
 
 auth.get('/', async (ctx) => {
     try{
-        const user = await User.find({}).sort({email:-1}).exec();//1 오름차순 -1내림차순
+        const users = await User.find({}).sort({email:-1}).exec();//1 오름차순 -1내림차순
         ctx.render('users/index', {users});
       }catch(e){
         ctx.throw(500, e);
@@ -50,7 +52,7 @@ auth.get('/', async (ctx) => {
 
 
 // show
-auth.get('/:username', async (ctx) => {
+auth.get('/:id', async (ctx) => {
     const user = await User.findOne({_id:ctx.params._id});
     ctx.render('users/show', {user});
     });
@@ -58,14 +60,14 @@ auth.get('/:username', async (ctx) => {
  
   
   // edit
-  auth.get('/:username/edit', async (ctx) => {
+  auth.get('/:id/edit', async (ctx) => {
     const user = await User.findOne({username:ctx.params.username});
     ctx.render('users/edit', {user:user});
     });
 
   
   // update // 2
-  auth.post('/:username', async (ctx) => {
+  auth.post('/:id', async (ctx) => {
     await User.findOne({username:ctx.params.username}).select('password').exec();
 
   
@@ -84,15 +86,16 @@ auth.get('/:username', async (ctx) => {
 
   
   // destroy
-  auth.delete('/:username',async (ctx) => {
-      try{
-        var username = ctx.params.username;
-        await User.deleteOne({username:username});
-        ctx.redirect('/users');
-      }catch(e){
-        ctx.throw(500, e);
-      }
-    });
 
   
 module.exports =  auth;
+
+function checkPermission(ctx, next){
+    User.findOne({username:ctx.params.username}, function(err, user){
+     if(err) return res.json(err);
+     if(user.id != req.user.id) return util.noPermission(ctx);
+   
+     next();
+    });
+   }
+   

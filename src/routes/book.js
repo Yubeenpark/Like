@@ -1,11 +1,10 @@
 const Router = require("@koa/router");
-const  checkLoggedIn = require("../../lib/checkLoggedIn");
-const  bookCtrl  = require("./book.ctrl");
+const  checkLoggedIn = require("../../src/lib/checkLoggedIn");
+//const  bookCtrl  = require("./book.ctrl");
 const book = new Router();
-const User = require("../../models/user");
-const Book = require("../../models/book");
+const User = require("../models/user")
+const Book = require("../models/book");
 //북id params로 전달. Render books/show
-
 book.get('/:id', async (ctx) => {
     const bookid = ctx.params.id;//bookid by parameter
   console.log(bookid);

@@ -11,13 +11,13 @@
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb p-1 pl-2 pr-2">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item"><a href="/api/page">Board</a></li>
-          <li class="breadcrumb-item"><a href="/api/page/<%= page._id %>"><%= page.title %></a></li>
+          <li class="breadcrumb-item"><a href="/book">Book</a></li>
+          <li class="breadcrumb-item"><a href="/page/<%= page._id %>"><%= page.title %></a></li>
           <li class="breadcrumb-item active" aria-current="page">Edit Post</li>
         </ol>
       </nav>
 
-      <form action="/api/page/<%= page._id %>?_method=put" method="post">
+      <form action="/page<%= page._id %>?_method=put" method="patch">
 
         <div class="form-group">
           <label for="title">Title</label>
@@ -26,11 +26,11 @@
 
         <div class="form-group">
           <label for="body">Body</label>
-            <textarea id="body" name="body" rows="5" class="form-control"><%= post.contents %></textarea>
+            <textarea id="body" name="body" rows="5" class="form-control"><%= page.contents %></textarea>
         </div>
 
         <div>
-          <a class="btn btn-primary" href="/api/page/<%= page._id %>">Back</a>
+          <a class="btn btn-primary" href="/page/<%= page._id %>">Back</a>
           <button type="submit" class="btn btn-primary">Submit</button>
         </div>
 

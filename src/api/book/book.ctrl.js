@@ -5,16 +5,16 @@ const Joi = require('@hapi/joi');
 const config = require('../../lib/config');
 const { Mongoose } = require('mongoose');
 exports.booklist = async (ctx) => {
-  let user;
+
 
     try {
-        book = await Book.find()
-            .sort({createDate: -1})
-            .exec();
-            await ctx.render('books/index', {book:book});
-    } catch (e) {
+        const books = await Book.find({}).sort({createDate: -1}).exec();
+        await ctx.render('books/index', {book:books});
+            console.log('get /book/');
+          //ctx.body = books;
+          } catch (e) {
         return ctx.throw(500, e);
-    console.log('get /book/booklist');
+        
   }
 }
 
@@ -66,17 +66,13 @@ exports.addBook = async (ctx) => {
 
 exports.getOneBook = async (ctx) => {
 
-  const bookid = ctx.request.body._id;
+  const bookid = ctx.params.id;//bookid by parameter
   console.log(bookid);
     try {
       const mybook = await Book.findById(bookid).exec();
       const user = await User.findById(mybook.author).exec();//작가정보
-      const author_name = user.nickname;
-      const bookInfo = {
-        "author_name":author_name
-      }
-      ctx.body = {mybook,author_name:author_name}
       console.log(mybook)
+      ctx.render('books/show', {book:mybook, user:user});
       //ctx.body.authorname = user.nickname;
       //ctx.body = mybook;
     } catch (e) {
@@ -84,7 +80,8 @@ exports.getOneBook = async (ctx) => {
     }
       //const user = await User.findById(mybook.author).exec();
     //ctx.body = mybook;
-
+    console.log('책 정보 하나! 얻기 성공');
+    ctx.status = 200;
     
 };
 
@@ -92,34 +89,37 @@ exports.getOneBook = async (ctx) => {
 
 exports.updateBook = async (ctx) => {
     // validation추가 필요
-    const file = ctx.request.files;
-    if(ctx.request.body.cover != undefined) // when user add a new pet image
-      ctx.request.body.cover = fs.readFileSync(file.image.path);
-    else
-      ctx.request.body.cover = ""
-    var book = ctx.request.body; //require books's _id
-    try {
-          const mybook = await Book.findOne({ _id: book._id });
-          if(ctx.state.user._id == mybook.author){
-            mybook.updateB(book);
-            ctx.body = book._id;
-            ctx.status = 200;}
-
-          }
-         catch (e) {
-          ctx.throw(500, e);
-        
-          ctx.status = 400;
-          ctx.body = {
-            message: "작성자가 아닙니다. "   }
+      const file = ctx.request.files;
+      if(ctx.request.body.cover != undefined) // when user add a new pet image
+        ctx.request.body.cover = fs.readFileSync(file.image.path);
+      else{
+        ctx.request.body.cover = ""
       }
-  };
-
+      var book = ctx.request.body; //require books's _id
+      try {
+            const mybook = await Book.findOne({ _id: ctx.params.id });
+            if(ctx.state.user._id == mybook.author){//작성한 사람이 맞을 때만
+              await mybook.updateB(book);
+              await ctx.redirect('/api/page/detail/'+ctx.params.id);
+              ctx.status = 200;}
+              else{
+                console.log('작성자가 아니다. ');
+                ctx.status = 400;
+              }
+            }
+            catch (e) {
+            ctx.throw(500, e);
+          
+            ctx.status = 400;
+            ctx.body = {
+              message: "작성자가 아닙니다. "   }
+        }
+    };
 
 
 exports.deleteBook = async (ctx) => {
 
-  let bookid = ctx.query.id;
+  let bookid =ctx.params.id;  
     try {
 
         //var foundB = await Book.findById(bookid).exec();

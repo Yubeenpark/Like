@@ -1,3 +1,4 @@
+<!-- views/books/index.ejs -->
 <!DOCTYPE html>
 <html>
   <head>
@@ -20,18 +21,18 @@
         </thead>
 
         <tbody>
-          <% if(page == null || page.length == 0){ %>
+          <% if(books == null || books.length == 0){ %>
             <tr>
               <td colspan=2> There is no data to show :( </td>
             </tr>
           <% } %>
-          <% page.forEach(function(page) { %>
+          <% books.forEach(function(book) { %>
             <tr>
               <td>
-                <a href="/api/page/<%= page._id %>"><div class="ellipsis"><%= page.title %></div></a>
+                <a href="/api/book/<%= book._id %>"><div class="ellipsis"><%= book.title %></div></a>
               </td>
               <td class="date">
-                <span data-date="<%= page.createDate %>"></span> <!-- 1 -->
+                <span data-date="<%= book.createDate %>"></span> <!-- 1 -->
               </td>
             </tr>
           <% }) %>
@@ -40,7 +41,7 @@
       </table>
 
       <div>
-        <a class="btn btn-primary" href="/api/page/new">New</a>
+        <a class="btn btn-primary" href="/api/book/new">New</a>
       </div>
 
     </div>
