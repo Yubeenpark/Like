@@ -84,10 +84,10 @@ app
 });
 
 router.get('/about', async ctx =>{
-   ctx.render('home/about');
+  await ctx.render('home/about');
 });
 router.get('/auth', async ctx =>{
-  ctx.render('users/login');
+  await ctx.render('users/login');
 });
 
 //router.use('/', api.routes());

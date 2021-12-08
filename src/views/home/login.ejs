@@ -17,7 +17,7 @@
     <div class="container">
         <div class="wrapper">
             <form action="/auth/login" method="post" name="Login_Form" class="form-signin">
-                <h3 class="form-signin-heading">Welcome! Please Sign In</h3>
+                <h3 class="form-signin-heading">안녕하세요. 로그인 부탁드립니다.</h3>
 
                 <input type="text" class="form-control" name="email" placeholder="Email Address" required="" autofocus="" />
                 <input type="password" class="form-control" name="password" placeholder="Password" required=""/>
@@ -25,6 +25,15 @@
                 <button class="btn btn-lg btn-primary btn-block" name="Submit" value="Login" type="Submit">Login</button>
             </form>
         </div>
+        <form action="/auth/findPassword" method="post">
+        <a href="/auth/findPassword">비밀번호를 까먹으셨나요?</a>
+        
+        <div class="form-group">
+          <label for="title">이메일을 적으시면 메일이 갑니다. </label>
+          <input type="text" id="email" name="email"  class="form-control">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
     </div>
 </body>
 </html>

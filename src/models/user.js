@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require('crypto');
+const { exist, allow } = require('@hapi/joi');
 //const Pet = require("./pet");
 
 const UserSchema = new Schema({

@@ -1,9 +1,10 @@
 const Router = require("@koa/router");
 const  checkLoggedIn = require("../../src/lib/checkLoggedIn");
 // const  pageCtrl  = require("./page.ctrl");
-
+const Joi = require('@hapi/joi');
 const page = new Router();
 const Page = require("../models/page");
+const User = require("../models/user");
 //const index = require('../../../src/index');
 //const render = require('koa-ejs');
 //Page api
@@ -23,22 +24,37 @@ page.post('/:id', pageCtrl.detailPage);    // detail recipe page
 //   /recipe/scroll?filter=filter_query&renewal=count (filter_query: 추천순 or 조회순)
 page.get('/recipe/scroll', pageCtrl.scrollPage);    // video list sorted by 추천순 or 조회순 in main page
 */
+//For test
+page.get('/pagelist', async (ctx) => {
 
-page.get('/tset', async (ctx) => {
+  try{
+    const page = await Page.find({}).sort({createDate:-1}).exec();
+  ctx.body = page;
+  }catch(e){
+    ctx.throw(500, e);
+  }
+  });
 
-  console.log('testtest');
-});
+
 
  page.get('/', async (ctx) => {
 
-  const page = await Page.find({}).sort({createDate:-1}).exec();
+  try{
+    const page = await Page.find({}).sort({createDate:-1}).exec();
   console.log(page);
   await ctx.render('posts/index', {page});
+  }catch(e){
+    ctx.throw(500, e);
+  }
   });
 
 
  page.get('/new', async (ctx) => {
+   try{
     await ctx.render('posts/new');
+   }catch(e){
+    ctx.throw(500, e);
+   }
   });
 
   // create
@@ -73,7 +89,7 @@ page.get('/tset', async (ctx) => {
           if (err) throw err;
           const user = await User.findById(ctx.state.user._id).exec();
           console.log(book._id);
-          ctx.redirect('/page');
+          await ctx.redirect('/page');
         });
       } catch (e) {
         ctx.throw(500, e);
@@ -81,7 +97,7 @@ page.get('/tset', async (ctx) => {
       console.log('저장 성공!');
       ctx.status = 200;
       
-      ctx.redirect('/page');
+      await ctx.redirect('/page');
     });
 
   
@@ -91,7 +107,8 @@ page.get('/tset', async (ctx) => {
     try{ 
         var id = ctx.params.id;      
         const page = await Page.findById(id).exec();
-        await ctx.render('posts/show', {page:page});
+        const user = await User.findById(page.author).exec();
+        await ctx.render('posts/show', {page:page,user:user});
         ctx.status = 200;
       }catch(e){
         ctx.throw(500,e);
@@ -113,10 +130,10 @@ page.patch('/:id',checkLoggedIn, async (ctx, next) => {
     try {
       const mypage = await Page.findOne({ _id: id });//require page's _id
       if(ctx.state.user._id == mypage.author){
-        mypage.updateP(page);
+        await mypage.updateP(page);
         
         console.log(mypage);
-        ctx.redirect("/page/"+id);
+        await ctx.redirect("/page/"+id);
         ctx.status = 200;}
 
       } catch (e) {
@@ -129,8 +146,8 @@ page.patch('/:id',checkLoggedIn, async (ctx, next) => {
   // destroy
   page.delete('/:id', async (ctx, next) => {
       try{
-        await Page.deleteOne({_id:ctx.params.id})
-        ctx.redirect('/page');
+        const page = await Page.deleteOne({_id:ctx.params.id})
+        //await ctx.redirect('/page');
           }catch(e){
             ctx.throw(500, e);
           }

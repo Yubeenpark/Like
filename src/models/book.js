@@ -8,7 +8,7 @@ const bookSchema = new Schema({
     pages:[{type:mongoose.Schema.Types.ObjectId, ref:'page', required:false}],//book contains several pages. pages is the list of page id
     title: {type:String, require:true}, // book title
     author: [{type:mongoose.Schema.Types.ObjectId, ref:'user', required:true}],//작가복수 가능
-    contents: {type:String}, // book subtitle or detail
+    contents: [{type:String}], // book subtitle or detail
     createDate: {type:Date, require:true, default:Date.now},
     updateDate: {type:Date, default:Date.now},
     views: {type: Number, default: 0},//how many people open this book

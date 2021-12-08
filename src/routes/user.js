@@ -6,41 +6,12 @@ const  checkLoggedIn = require("../../src/lib/checkLoggedIn");
 const User = require("../models/user");
 //var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const auth = new Router();
-
-//  회원가입- 로컬	이메일 인증번호 발송	POST	auth/signup/email/demand
-// 회원가입	이메일 인증번호 확인	POST	auth/signup/email/verify
-// 로그인	"소셜 로그인
-// (페이스북 구글 네이버 카카오)"	POST	auth/signin/social
-// 회원정보갱신	설문이나 설정에서 개인정보 바꾸면 적용	PATCH	auth/update/pet
-// 회원정보갱신	설문이나 설정에서 개인정보 바꾸면 적용	PATCH	auth/update/user
+const nodemailer = require('nodemailer');
+const config = require('../lib/config');
+const Joi = require('@hapi/joi');
 /*
-auth.get('/userlist', authCtrl.userlist);
-auth.get('/test', authCtrl.test);
-auth.post('/signup', authCtrl.signupLocal);
-auth.post('/signin', authCtrl.signinLocal);
-auth.get('/signout',checkLoggedIn, authCtrl.signout);
-auth.get('/check', authCtrl.check2);
-auth.delete('/user',checkLoggedIn,authCtrl.Withdrawal); // 회원 탈퇴
-auth.post('/validate', authCtrl.exists);
-auth.post('/checkpassword', authCtrl.checkPassword);
-auth.get('/book',checkLoggedIn,authCtrl.getUserBook);
-auth.get('/user', checkLoggedIn,authCtrl.userinfo); // show user information
-auth.patch('/user', checkLoggedIn, authCtrl.updateUser);    // modify user information
-auth.patch('/user/password', authCtrl.changePassword);    // change password
-auth.post('/find/password', authCtrl.findPassword); // 비밀번호 찾기
-auth.get('/favorite',checkLoggedIn, authCtrl.showFavorite); // show a list of user's favorites
-auth.post('/favorite',checkLoggedIn, authCtrl.addFavorite); // add favorite
-auth.delete('/favorite',checkLoggedIn, authCtrl.delFavorite);   // delete favorite
 
-auth.post('/find/password', authCtrl.findPassword); // 비밀번호 찾기
 */
-auth.get('/new', async (ctx) => {
-    ctx.render('users/new');
-        });
-
-auth.get('/test', async (ctx) => {
-    ctx.render('users/login');
-        });
 
 
 // show
@@ -61,7 +32,14 @@ auth.get('/login', async (ctx) => {
 });
 
  
-  
+auth.get('/new', async (ctx) => {
+  try{
+  await ctx.render('users/new');
+  }catch(e){
+    console.log(e);
+  }
+      });
+
   // edit
   auth.get('/:id/edit', async (ctx) => {
     const user = await User.find({email:ctx.params.email}).exec();
@@ -74,9 +52,9 @@ auth.get('/login', async (ctx) => {
     const errors ='';
     //handle error
     if (!email || !password) {
-      ctx.status = 401; //Unauthorized
-      errors= '비밀번호, 이메일 중 하나가 틀렸습니다. '
-      return;
+       //Unauthorized
+      alert( '비밀번호, 이메일 중 하나가 틀렸습니다. ');
+      await ctx.redirect('/auth/login');
     }
     try {
       //const user = User.findOne({ email: email });
@@ -100,6 +78,7 @@ auth.get('/login', async (ctx) => {
         httpOnly: false,
       });
       ctx.status = 200;
+      ctx.state.user = user;
       ctx.redirect('/page');
       console.log('토큰나옴, 로그인');
     } catch (e) {
@@ -149,42 +128,105 @@ auth.get('/login', async (ctx) => {
     } catch (e) {
         ctx.throw(500, e);
     }
-    ctx.cookies.set('access_token', token, { maxAge: 1000 * 60 * 60 * 24 * 7 ,httpOnly: true,});
+    await ctx.cookies.set('access_token', token, { maxAge: 1000 * 60 * 60 * 24 * 7 ,httpOnly: true,});
     console.log('set cookie ok');
 
     // 응답할 데이터에서 hashedPassword 필드 제거
     ctx.status = 200;
-    await ctx.render('users/new');
+    await ctx.render('users/show');
   } catch (e) {
     ctx.throw(500, e);
   }});
   
   // update // 2
-  auth.post('/:id', async (ctx) => {
-    await User.findOne({username:ctx.params.username}).select('password').exec();
-
+  auth.patch('/:id', async (ctx) => {
+    const schema = Joi.object().keys({
+      // password: Joi.string().min(6).max(20).required(),
+      username: Joi.string().allow(null, ''),
+      phone: Joi.string().allow(null, ''),
+      nickname: Joi.string().allow(null, ''),
+      fcmToken: Joi.string(),
+      // birth: Joi.date()
+    });
+    
+    try {
+      const value = await schema.validateAsync(ctx.request.body);
+    } catch (err) {
+      console.log(err);
+      ctx.status = 400;
+      return;
+    }
   
-        // update user object
-        user.originalPassword = user.password;
-        user.password = ctx.body.newPassword? ctx.body.newPassword : user.password; // 2-3
-        for(var p in ctx.body) // 2-4
-          user[p] = ctx.body[p];
-        
+    ctx.request.body.email = ctx.state.user.email;
   
-        // save updated user
-        await user.save();
-
-        ctx.redirect('/users/'+user.nickname);
+    try {
+      await User.updateUser(ctx.request.body);
+    } catch (e) {
+      ctx.throw(500, e);
+    }
+    ctx.status = 200;
+    await ctx.redirect('/users/'+user.nickname);
     });
 
   
   // destroy
   auth.get('/logout', async (ctx) => {
-    ctx.cookies.set('access_token');
-    ctx.status = 204;
-    ctx.redirect('/');
+    await ctx.cookies.set('access_token');
+     ctx.status = 204;
+    await ctx.redirect('/');
   });
+
+  function getRandomInt(min, max) { //min ~ max 사이의 임의의 정수 반환
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+
+ 
+
+  auth.post('/findPassword', async (ctx) => {
+    var status = 400;
+
+    // 전송 옵션 설정
+    // trainsporter: is going to be an object that is able to send mail
+    let transporter = nodemailer.createTransport({
+      service: 'gmail',
+      host: 'smtp.gmail.com',
+      // port: 587,
+      port: 465,
+      secure: true,
+      auth: {
+        user: config.mailer.user, //gmail주소입력
+        pass: config.mailer.password, //gmail패스워드 입력
+      },
+    });
+    var numsend = getRandomInt(100000,999999);
+    var mailOptions = {
+      from: `"Like project"<${config.mailer.user}>`, //enter the send's name and email
+      to: ctx.request.body.email, // recipient's email
+      subject: 'Like password', // title of mail
+      html: `안녕하세요, 글을 나누는 즐거움 Like 입니다.
+                <br />
+                인증번호는 다음과 같습니다. (임시)
+                <br />
+                ${numsend}`,
+    };
   
+    try {
+      await transporter.sendMail(mailOptions, async function (error, info) {
+        if (error) {
+          ctx.status = 401;
+          return;
+        } else {
+          console.log('Email sent: ' + info.response);
+          ctx.body = { success: true };
+          status = 200;
+        }
+      });
+    } catch (e) {
+      ctx.throw(500, e);
+    }
+    ctx.status = 200;
+  });
   
 module.exports =  auth;
 

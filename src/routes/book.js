@@ -2,15 +2,18 @@ const Router = require("@koa/router");
 const  checkLoggedIn = require("../../src/lib/checkLoggedIn");
 //const  bookCtrl  = require("./book.ctrl");
 const book = new Router();
-const User = require("../models/user")
+const User = require("../models/user");
 const Book = require("../models/book");
+const Joi = require('@hapi/joi');
 //북id params로 전달. Render books/show
 book.get('/:id', async (ctx) => {
     const bookid = ctx.params.id;//bookid by parameter
   console.log(bookid);
     try {
       const book = await Book.findOne({_id:ctx.params.id});
-      ctx.render('books/show', {book});
+      const page = await Page.findById(book.pages);
+      const user = await User.findById(book.author).exec();
+      await ctx.render('books/show', {book,user,page});
       //ctx.body.authorname = user.nickname;
       //ctx.body = mybook;
     } catch (e) {
@@ -55,7 +58,7 @@ book.post('/',checkLoggedIn,async (ctx) => {
             if (err) throw err;
             const user = await User.findById(ctx.state.user._id).exec();
             console.log(book._id);
-            ctx.redirect('/books');
+            await ctx.redirect('/books');
           });
         } catch (e) {
           ctx.throw(500, e);
@@ -127,7 +130,7 @@ book.delete('/:id',checkLoggedIn,async (ctx) => {
 book.get('/',async (ctx) => {
     try {
         const books = await Book.find({}).sort({createDate: -1}).exec();
-        ctx.render('books/index', {books:books});
+        await ctx.render('books/index', {books:books});
           } catch (e) {
         return ctx.throw(500, e);
     }
@@ -149,6 +152,21 @@ book.get('/search', async (ctx) => {
 });
 
 book.get('/new', async (ctx) => {
-    ctx.render('books/new');
+  try{
+  await ctx.render('books/new');
+  }catch(e){
+    ctx.throw(500, e);
+  }
   });
+//test용
+  book.get('/booklist',async (ctx) => {
+    try {
+        const books = await Book.find({}).sort({createDate: -1}).exec();
+        ctx.body = books;
+          } catch (e) {
+        return ctx.throw(500, e);
+    }
+    }
+);
+
 module.exports = book;
