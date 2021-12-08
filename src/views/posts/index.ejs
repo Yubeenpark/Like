@@ -30,7 +30,7 @@
           <% page.forEach(function(page) { %>
             <tr>
               <td>
-                <a href="/page/<%= page._id %>"><div class="ellipsis"><%= page.title %> author:<%= page.author.email %></div></a>
+                <a href="/page/<%= page._id %>"><div class="ellipsis"><%= page.title %> <%= page.author.email %></div></a>
               </td>
               <td class="date">
                 <span data-date="<%= page.createDate %>"></span> <!-- 1 -->
