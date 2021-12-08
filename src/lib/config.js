@@ -1,7 +1,7 @@
 const config = {
     mailer: {
-      user: "yoobinpark@khu.ac.kr",
-      password: "1q2w3e4r!@",
+      user: "like01test@gmail.com",
+      password: "like1412",
       expiresIn: 60 * 5,
     },
   };

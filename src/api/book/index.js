@@ -11,5 +11,7 @@ book.patch('/', checkLoggedIn, bookCtrl.updateBook);  // modify book information
 book.delete('/',checkLoggedIn,bookCtrl.deleteBook);   // delete book
 book.get('/booklist',bookCtrl.booklist);
 book.get('/search',bookCtrl.scrollBook);
-
+book.get('/new', async (ctx) => {
+    ctx.render('books/new');
+  });
 module.exports = book;

@@ -9,13 +9,13 @@ exports.booklist = async (ctx) => {
 
     try {
         book = await Book.find()
-            .sort({created: -1})
+            .sort({createDate: -1})
             .exec();
+            await ctx.render('books/index', {book:book});
     } catch (e) {
         return ctx.throw(500, e);
-    }
-
-    ctx.body = book;
+    console.log('get /book/booklist');
+  }
 }
 
 
@@ -55,12 +55,12 @@ exports.addBook = async (ctx) => {
           if (err) throw err;
           const user = await User.findById(ctx.state.user._id).exec();
           console.log(book._id);
-
+          ctx.redirect('/books');
         });
       } catch (e) {
         ctx.throw(500, e);
       }
-      ctx.body = book;
+      console.log('저장 성공!');
       ctx.status = 200;
 };
 
@@ -97,44 +97,67 @@ exports.updateBook = async (ctx) => {
       ctx.request.body.cover = fs.readFileSync(file.image.path);
     else
       ctx.request.body.cover = ""
-  
     var book = ctx.request.body; //require books's _id
     try {
-      const mybook = await Book.findOne({ _id: book._id });
-      
-      mybook.updateB(book);
-  
-      ctx.body = book._id;
-    } catch (e) {
-      ctx.throw(500, e);
-    }
-    ctx.body = book._id;
-  
-    console.log(book);
-    ctx.status = 200;
+          const mybook = await Book.findOne({ _id: book._id });
+          if(ctx.state.user._id == mybook.author){
+            mybook.updateB(book);
+            ctx.body = book._id;
+            ctx.status = 200;}
+
+          }
+         catch (e) {
+          ctx.throw(500, e);
+        
+          ctx.status = 400;
+          ctx.body = {
+            message: "작성자가 아닙니다. "   }
+      }
   };
 
 
+
 exports.deleteBook = async (ctx) => {
+
+  let bookid = ctx.query.id;
     try {
-        var b = await Book.find(ctx.params.id);
-        await Page.deleteMany({"pages":{$in:b.pages}});//book에 있던 페이지 다 지우기 
+
+        //var foundB = await Book.findById(bookid).exec();
+        //북작가에게서 책 정보 지우기
+        var author = await User.findById(bookid);//북 작가.
+        console.log(author);
+        console.log(author.books);
+        await User.delBook(ctx.state.user.email,bookid);
+         //book에 있던 페이지 다 지우기 
+        await Page.deleteMany({"pages":{$in:b.pages}});
+       
+
+        //최종 book지우기
+        var b = await Book.deleteOne({_id:bookid});
     } catch (e) {
         if(e.name === 'CastError') {
             ctx.status = 400;
             return;
         }
     }
-    ctx.status = 204; // No Content
+    console.log('delete success');
+  ctx.body = {
+    message: "Delete"
+  }
 };
 
 exports.detailBook = async (ctx) => {
-    var ObjectId = require('mongodb').ObjectId; 
-    var id = req.params.book_id;      
-    var o_id = new ObjectId(id);
-    const book = await db.Book.find({_id:o_id});
-    ctx.body = book;
+  try{ 
+    var id = ctx.params.id;      
+    const book = await dBook.find({_id:id});
+    ctx.render('books/show', {book:book});
     ctx.status = 200;
+  } catch (e) {
+    ctx.status = 400;
+    console.log('북 삭제 오류');
+  }
+    
+  
 };
 
 exports.scrollBook = async (ctx) => {
@@ -153,9 +176,5 @@ exports.scrollBook = async (ctx) => {
       } catch (e) {
           ctx.throw(500, e);
       }
-  }
-
-  else if(filter === "추천순") { //추천순
-
   }
 };

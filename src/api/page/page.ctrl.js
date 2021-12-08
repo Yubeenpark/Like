@@ -4,6 +4,8 @@ const Book = require("../../models/book");
 const Joi = require('@hapi/joi');
 const config = require('../../lib/config');
 const { Mongoose } = require('mongoose');
+
+
 exports.search = async (ctx) => {
     const { title } = ctx.query;   //search word
     console.log(title)
@@ -19,12 +21,18 @@ exports.search = async (ctx) => {
 
 
 exports.detailPage = async (ctx) => {
-    var ObjectId = require('mongodb').ObjectId; 
-    var id = req.params.page_id;      
+  try{ 
+  var ObjectId = require('mongodb').ObjectId; 
+    var id = req.params.id;      
     var o_id = new ObjectId(id);
     const page = await db.Page.find({_id:o_id});
+    await ctx.redirect('/api/page/detail/'+req.params.id);
     ctx.body = page;
     ctx.status = 200;
+  }catch(e){
+    ctx.throw(500,e);
+  }
+
 };
 
 // parameters: array with book objects as elements
@@ -149,19 +157,21 @@ exports.scrollPage = async (ctx) => {
     else
       ctx.request.body.image = ""
   
-    var user = ctx.request.body; //require user id
+    var page = ctx.request.body; 
     try {
-      const mybook = await Book.findOne({ _id: book._id });
-      
-      mybook.updateP(book);
-  
-      ctx.body = user._id;
-    } catch (e) {
+      const mypage = await Page.findOne({ _id: page._id });//require page's _id
+      if(ctx.state.user._id == mypage.author){
+        mypage.updateP(book);
+        ctx.body = mypage;
+        console.log(mypage);
+        ctx.status = 200;}
+
+      } catch (e) {
       ctx.throw(500, e);
-    }
-    ctx.body = user._id;
-  
-    console.log(user);
+      ctx.body = {
+        message: "작성자가 아닙니다. "   }
+  }
+
     ctx.status = 200;
   };
 
@@ -177,19 +187,4 @@ exports.deletePage = async (ctx) => {
       }
   }
   ctx.status = 204; // No Content
-};
-
-exports.getPage = async (ctx) => {
-  const pageid = ctx.request.body._id;
-   try {
-      const mypage = await Book.findById(pageid).exec();
-      const user = await User.findById(mypage.author).exec();//작가정보
-      const author_name = user.nickname;
-      ctx.body = {mypage,author_name:author_name}
-      console.log(mypage)
-
-    } catch (e) {
-      ctx.throw(500, e);
-    }
-
 };
