@@ -12,7 +12,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node app"
+    "start": "node src"
   },
   "author": "",
   "license": "ISC",
