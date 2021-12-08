@@ -4,9 +4,9 @@ const { Schema } = mongoose;
 
 const PageSchema = new Schema({
     id: mongoose.Schema.Types.ObjectId,//unique number of page
-    book:{type:String},//book contains several pages 
+    book:[{type:mongoose.Schema.Types.ObjectId, ref:'book', required:false}],//book contains several pages 
     title: {type:String, require:true}, // title of post
-    author: [{type:String, require:true, default:user.user}], 
+    author: [{type:mongoose.Schema.Types.ObjectId, ref:'user', required:true}], 
     contents: {type:String}, // contents of page
     createDate: {type:Date, require:true, default:Date.now},
     updateDate: {type:Date, default:Date.now},

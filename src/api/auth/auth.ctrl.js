@@ -6,6 +6,9 @@ const nodemailer = require('nodemailer');
 const config = require('../../lib/config');
 const { Mongoose } = require('mongoose');
 const { exist, allow } = require('@hapi/joi');
+const index = require('../../../src/index');
+const render = index.render;
+
 const fs = require('fs');
 exports.test = async (ctx) => {
   console.log('cookie');
@@ -61,7 +64,7 @@ exports.signupLocal = async (ctx) => {
 
     // 응답할 데이터에서 hashedPassword 필드 제거
     ctx.status = 200;
-    ctx.body = await account.serialize();
+    await ctx.render('users/new');
   } catch (e) {
     ctx.throw(500, e);
   }
@@ -97,6 +100,7 @@ exports.signinLocal = async (ctx) => {
       httpOnly: false,
     });
     ctx.status = 200;
+    await ctx.render('users/index');
     console.log('토큰나옴');
   } catch (e) {
     ctx.throw(500, e);

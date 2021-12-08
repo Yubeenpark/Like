@@ -5,9 +5,9 @@ const { Schema } = mongoose;
 
 const bookSchema = new Schema({
     id: mongoose.Schema.Types.ObjectId,//unique number of page
-    pages:[{type:String}],//book contains several pages. pages is the list of page id
+    pages:[{type:mongoose.Schema.Types.ObjectId, ref:'page', required:false}],//book contains several pages. pages is the list of page id
     title: {type:String, require:true}, // book title
-    author: [{type:String, require:true, default:user.user}],//작가복수 가능
+    author: [{type:mongoose.Schema.Types.ObjectId, ref:'user', required:true}],//작가복수 가능
     contents: {type:String}, // book subtitle or detail
     createDate: {type:Date, require:true, default:Date.now},
     updateDate: {type:Date, default:Date.now},
@@ -102,5 +102,6 @@ const bookSchema = new Schema({
   };
 
 
+  
 
 module.exports = mongoose.model("Book", bookSchema);

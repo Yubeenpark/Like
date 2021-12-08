@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src",
-    "start:dev": "nodemon --watch src/ src/index.js"
+    "start:dev": "NODE_PATH=src nodemon --legacy-watch src/ src/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +16,7 @@
     "bcrypt": "^5.0.1",
     "crypto": "^1.0.1",
     "dotenv": "^10.0.0",
+    "ejs": "^3.1.6",
     "express": "^4.17.1",
     "firebase": "^9.6.0",
     "http2": "^3.3.7",
@@ -23,12 +24,16 @@
     "koa": "^2.13.4",
     "koa-body": "^4.2.0",
     "koa-bodyparser": "^4.3.0",
+    "koa-ejs": "^4.3.0",
+    "koa-passport": "^4.1.4",
     "koa-router": "^10.1.1",
     "koa-send": "^5.0.1",
+    "koa-views": "^8.0.0",
     "mongoose": "^6.0.12",
     "nodemailer": "^6.7.1",
     "passport": "^0.5.0",
     "passport-google-oauth": "^2.0.0",
+    "passport-local": "^1.0.0",
     "spdy": "^4.0.2"
   },
   "devDependencies": {

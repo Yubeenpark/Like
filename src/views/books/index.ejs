@@ -1,0 +1,49 @@
+<!-- views/books/index.ejs -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <%- include('../partials/head') %>
+  </head>
+  <body>
+    <%- include('../partials/nav') %>
+
+    <div class="container mb-3">
+
+      <h2 class="mb-3">Board</h2>
+
+      <table class="board-table table table-sm border-bottom">
+
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Title</th>
+            <th scope="col" class="date">Date</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% if(books == null || books.length == 0){ %>
+            <tr>
+              <td colspan=2> There is no data to show :( </td>
+            </tr>
+          <% } %>
+          <% books.forEach(function(book) { %>
+            <tr>
+              <td>
+                <a href="/api/book/<%= book._id %>"><div class="ellipsis"><%= book.title %></div></a>
+              </td>
+              <td class="date">
+                <span data-date="<%= book.createDate %>"></span> <!-- 1 -->
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+
+      </table>
+
+      <div>
+        <a class="btn btn-primary" href="/api/book/new">New</a>
+      </div>
+
+    </div>
+  </body>
+</html>

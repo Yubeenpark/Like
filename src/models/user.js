@@ -12,10 +12,10 @@ const UserSchema = new Schema({
     password: String,
     token: String,
     //user info
-    username: String,
     phone: {type: String, require: true},
     nickname: {type: String, default: ""},
-    books: [{type: String}],//array of bookid
+    books: [{type:mongoose.Schema.Types.ObjectId, ref:'book', required:false}],//array of bookid
+    pages:[{type:mongoose.Schema.Types.ObjectId, ref:'page', required:false}],
     favorite: [{ type: String }],//String of url(book, page)
   });
   

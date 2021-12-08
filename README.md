@@ -19,7 +19,7 @@ server use Node.js, Koa.js and frotend use flutter(Dart)
 * [Node.js](https://nodejs.org/)
 * [Koa.js](https://koajs.com/)
 
-* [flutter](https://flutter.dev/)
+
 
 
 
@@ -31,7 +31,6 @@ server use Node.js, Koa.js and frotend use flutter(Dart)
 ## Getting Started
 
 Go to the Server [Project folder](http://khuhub.khu.ac.kr/2018102946/likeBack), and git clone.
-And go the Frontend [Project folder](http://khuhub.khu.ac.kr/2018102946/likefront)and git clone. 
 
 
 ### Installation
@@ -72,7 +71,7 @@ _Below is an example of how you can instruct your audience on installing and set
 Email -- yoobinpark@khu.ac.kr
 
 Project Link: [http://khuhub.khu.ac.kr/2018102946/likeBack](http://khuhub.khu.ac.kr/2018102946/likeBack)
-              [http://khuhub.khu.ac.kr/2018102946/likefront](http://khuhub.khu.ac.kr/2018102946/likefront)
+
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
