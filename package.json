@@ -4,15 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src",
     "start:dev": "NODE_PATH=src nodemon --legacy-watch src/ src/index.js"
-  },{
-  "name": "heroku",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "node src"
   },
   "author": "",
   "license": "ISC",
