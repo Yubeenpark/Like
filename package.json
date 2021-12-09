@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src",
-    "start:dev": "NODE_PATH=src nodemon --legacy-watch src/ src/index.js"
+    "start": "node src"
   },
   "author": "",
   "license": "ISC",
@@ -40,3 +39,4 @@
     "eslint": "^8.2.0"
   }
 }
+
