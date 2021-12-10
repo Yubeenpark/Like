@@ -43,7 +43,7 @@ auth.get('/new', async (ctx) => {
   // edit
   auth.get('/:id/edit', async (ctx) => {
     const user = await User.find({email:ctx.params.email}).exec();
-    ctx.render('users/edit', {user:user});
+    await ctx.render('users/edit', {user:user});
     });
 
 
@@ -55,7 +55,7 @@ auth.get('/new', async (ctx) => {
        //Unauthorized
       alert( '비밀번호, 이메일 중 하나가 틀렸습니다. ');
       await ctx.redirect('/auth/login');
-    }
+    }else{
     try {
       //const user = User.findOne({ email: email });
       const user = await User.findByEmail(email);
@@ -63,6 +63,7 @@ auth.get('/new', async (ctx) => {
       console.log(user);
       if (!user) {
         ctx.status = 401;
+        ctx.body = 'There is no user';
         return;
       }
   
@@ -71,24 +72,27 @@ auth.get('/new', async (ctx) => {
         ctx.status = 401;
         return;
       }
-      ctx.body = await user.serialize();
+      const check = await user.serialize();
       const token = user.generateToken();
       ctx.cookies.set('access_token', token, {
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7일
         httpOnly: false,
       });
-      ctx.status = 200;
-      ctx.state.user = user;
-      ctx.redirect('/page');
-      console.log('토큰나옴, 로그인');
+      //ctx.status = 200;
+      
+      //ctx.state.user = user;
+      await ctx.render('home/welcome',{user:user});
     } catch (e) {
       ctx.throw(500, e);
-      ctx.redirect('/')
+      ctx.redirect('/');
     }
+
+  }
     
   });
   
-  auth.post('/signup',async(ctx)=>{const { email, password, address } = ctx.request.body;
+  auth.post('/signup',async(ctx)=>{
+    const { email, password, nickname } = ctx.request.body;
   console.log(ctx.request.body);
   const schema = Joi.object().keys({
     email: Joi.string().min(3).required(),
@@ -125,15 +129,15 @@ auth.get('/new', async (ctx) => {
     try {
         token = await account.generateToken();
         console.log('token ok');
+        await ctx.cookies.set('access_token', token, { maxAge: 1000 * 60 * 60 * 24 * 7 ,httpOnly: true,});
+      console.log('set cookie ok'); 
+      await ctx.render('users/show',{user:account});
     } catch (e) {
         ctx.throw(500, e);
     }
-    await ctx.cookies.set('access_token', token, { maxAge: 1000 * 60 * 60 * 24 * 7 ,httpOnly: true,});
-    console.log('set cookie ok');
 
     // 응답할 데이터에서 hashedPassword 필드 제거
-    ctx.status = 200;
-    await ctx.render('users/show');
+   
   } catch (e) {
     ctx.throw(500, e);
   }});
@@ -181,7 +185,20 @@ auth.get('/new', async (ctx) => {
 }
 
 
- 
+auth.delete('/:id', async (ctx) => {
+
+  try {
+    ctx.cookies.set('access_token');
+    await Book. //delete pets owned by user
+    User.deleteOne({ _id: ctx.params.id }, function (err) {}); //delete user
+  } catch (err) {
+    ctx.throw(500, e);
+  }
+
+ctx.status = 200;
+await ctx.redirect('/');
+
+});
 
   auth.post('/findPassword', async (ctx) => {
     var status = 400;
@@ -228,6 +245,7 @@ auth.get('/new', async (ctx) => {
     ctx.status = 200;
   });
   
+
 module.exports =  auth;
 
 function checkPermission(ctx, next){

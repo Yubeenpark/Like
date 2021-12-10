@@ -11,7 +11,7 @@
 
       <h3 class="mb-3">Edit User</h3>
 
-      <form action="/auth/users/<%= user.username %>?_method=put" method="post">
+      <form action="/auth/users/<%= user._id %>?_method=patch" method="patch">
 
         <div class="form-group row">
           <label for="currentPassword" class="col-sm-3 col-form-label">Current Password*</label>

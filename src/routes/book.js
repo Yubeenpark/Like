@@ -4,16 +4,23 @@ const  checkLoggedIn = require("../../src/lib/checkLoggedIn");
 const book = new Router();
 const User = require("../models/user");
 const Book = require("../models/book");
+const Page = require("../models/page");
 const Joi = require('@hapi/joi');
 //북id params로 전달. Render books/show
 book.get('/:id', async (ctx) => {
     const bookid = ctx.params.id;//bookid by parameter
   console.log(bookid);
     try {
-      const book = await Book.findOne({_id:ctx.params.id});
-      const page = await Page.findById(book.pages);
+      const book = await Book.findById(ctx.params.id).exec();
+      const pagelist = [];
+      console.log(book.pages);
+      for(var i in book.pages.length){
+        const bo = await Page.findById(book.pages[i]);
+        pagelist.push(bo);
+        }
+        consol.log(pagelist);
       const user = await User.findById(book.author).exec();
-      await ctx.render('books/show', {book,user,page});
+      await ctx.render('books/show', {book:book,page:pagelist,user:user});
       //ctx.body.authorname = user.nickname;
       //ctx.body = mybook;
     } catch (e) {
@@ -50,13 +57,13 @@ book.post('/',checkLoggedIn,async (ctx) => {
           ctx.status = 400;
           return;
         }
-        ctx.request.body.author = ctx.state.user;
+        ctx.request.body.author = ctx.cookies.user;
         const book = new Book(ctx.request.body);
       
         try {
           book.save(async (err) => {
             if (err) throw err;
-            const user = await User.findById(ctx.state.user._id).exec();
+            const user = await User.findById(ctx.cookies.user._id).exec();
             console.log(book._id);
             await ctx.redirect('/books');
           });
@@ -152,12 +159,8 @@ book.get('/search', async (ctx) => {
 });
 
 book.get('/new', async (ctx) => {
-  try{
-  await ctx.render('books/new');
-  }catch(e){
-    ctx.throw(500, e);
-  }
-  });
+    await ctx.render('books/new');}
+    );
 //test용
   book.get('/booklist',async (ctx) => {
     try {

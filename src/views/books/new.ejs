@@ -11,28 +11,28 @@
       <nav aria-label="breadcrumb"> <!-- 1 -->
         <ol class="breadcrumb p-1 pl-2 pr-2">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item"><a href="/api/page">Page</a></li>
+          <li class="breadcrumb-item"><a href="/page">Book</a></li>
           <li class="breadcrumb-item active" aria-current="page">New Book</li>
         </ol>
       </nav>
 
-      <form action="/api/book" method="post">
+      <form action="/book" method="post">
 
         <div class="form-group">
           <label for="title">Title</label>
           <input type="text" id="title" name="title" value="" class="form-control">
         </div>
+        <div class="form-group">
+          <label for="title">author</label>
+          <input type="text" id="author" name="author" value="" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="contents">Body</label>
+          <textarea id="contents" name="contents" rows="5" class="form-control"></textarea>
+        </div>
         
-        <div class="form-group">
-          <label for="contents">Body</label>
-          <textarea id="contents" name="contents" rows="5" class="form-control"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="contents">Body</label>
-          <textarea id="contents" name="contents" rows="5" class="form-control"></textarea>
-        </div>
         <div>
-          <a class="btn btn-primary" href="/api/book">Back</a>
+          <a class="btn btn-primary" href="/book">Back</a>
           <button type="submit" class="btn btn-primary">Submit</button>
         </div>
 

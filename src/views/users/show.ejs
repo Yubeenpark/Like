@@ -10,15 +10,15 @@
 
     <div class="container mb-3">
 
-      <h3 class="contentBoxTop">usefname</h3>
+      <h3 class="contentBoxTop">회원가입 성공!</h3>
 
  
-      <form class="user-form" action="/users" method="post">
+      <form class="user-form" action="/auth" method="post">
         <fieldset disabled>
           <div class="form-group row">
-            <label for="name" class="col-sm-3 col-form-label">Name</label>
+            <label for="name" class="col-sm-3 col-form-label">닉네임</label>
             <div class="col-sm-9">
-              <input class="form-control" type="text" id="name" name="name" value="<%= user.name %>">
+              <input class="form-control" type="text" id="name" name="name" value="<%= user.nickname %>">
             </div>
           </div>
           <div class="form-group row">
@@ -31,8 +31,8 @@
       </form>
 
       <div>
-        <a class="btn btn-primary" href="/auth/users">Back</a>
-        <a class="btn btn-primary" href="/auth/users/<%= user.email %>/edit">Edit</a>
+        <a class="btn btn-primary" href="/auth">Back</a>
+        <a class="btn btn-primary" href="/auth/<%= user.email %>/edit">Edit</a>
         <form action="/users/<%= user.email %>?_method=delete" method="post" class="d-inline">
           <a class="btn btn-primary" href="javascript:void(0)" onclick="confirm('Do you want to delete this?')?this.parentElement.submit():null;">Delete</a>
         </form>

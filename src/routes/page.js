@@ -50,15 +50,13 @@ page.get('/pagelist', async (ctx) => {
 
 
  page.get('/new', async (ctx) => {
-   try{
+  
     await ctx.render('posts/new');
-   }catch(e){
-    ctx.throw(500, e);
-   }
+  
   });
 
   // create
-  page.put('/', checkLoggedIn, async (ctx, next) => {
+  page.post('/', async (ctx, next) => {
     const {
       title,
       author,
@@ -81,7 +79,7 @@ page.get('/pagelist', async (ctx) => {
         ctx.status = 400;
         return;
       }
-      ctx.request.body.author = ctx.state.user;
+      ctx.request.body.author = ctx.cookies.user;
       const book = new Book(ctx.request.body);
     
       try {
@@ -117,6 +115,16 @@ page.get('/pagelist', async (ctx) => {
 
   });
 
+   page.get('/:id/edit', async (ctx, next) => {
+    try{ 
+        const page = await Page.findById(id).exec();
+        await ctx.render('page/edit',{pag:page})
+      }catch(e){
+        ctx.throw(500,e);
+      }
+
+
+  });
 
 // update
 page.patch('/:id',checkLoggedIn, async (ctx, next) => {

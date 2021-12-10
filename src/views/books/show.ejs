@@ -11,23 +11,24 @@
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb p-1 pl-2 pr-2">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item"><a href="/page">Page</a></li>
+          <li class="breadcrumb-item"><a href="/book">Book</a></li>
           <li class="breadcrumb-item active" aria-current="book"><%= book.title %></li>
         </ol>
       </nav>
 
       <div class="card">
         <h5 class="card-header p-2"><%= book.title %></h5>
+        <h7 class="card-header p-2"><%= user.nickname %> email: <%= user.email%></h7>
         <div class="row"> <!-- 1 -->
 
           <div class="col-md-7 col-lg-8 col-xl-9 order-sm-2 order-md-1"> <!-- 1 -->
             <div class="post-body p-2"><%= book.contents %></div>
           </div>
-
+          <%= page[0]%>
           <div class="col-md-5 col-lg-4 col-xl-3 order-sm-1 order-md-2"> <!-- 1 -->
             <div class="post-info card m-2 p-2"> 
-              <div><span>Created</span> : <span data-date-time="<%= book.createDate %>"></span></div> <!-- 2 -->
-              <% if(book.createDate) { %>
+              <div><span>Created</span> : <%= book.createDate %><span data-date-time="<%= book.createDate %>"></span></div> <!-- 2 -->
+              <% if(book.updateDate) { %>
                 <div><span>Updated</span> : <span data-date-time="<%= book.updateDate %>"></span></div> <!-- 2 -->
               <% } %>
             </div>
