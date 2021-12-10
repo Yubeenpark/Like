@@ -12,7 +12,14 @@
         <h1>Like</h1>
         <P>Like Proejct 입니다. 방문해 주셔서 감사합니다!</p>
       </div>
-     
+      <% if(user == null || user.length == 0){ %>
+        <tr>
+          <td colspan=2> There is no data to show :( </td>
+        </tr>
+      <% } %>
+      <% else {  %>
+        <%= user.nickname %> 
+        <% }) %>
     </div>
   </body>
 </html>
